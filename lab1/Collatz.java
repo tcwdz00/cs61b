@@ -1,5 +1,5 @@
 /** Class that prints the Collatz sequence starting from a given number.
- *  @author Qianbo Wang
+ *  @author wqb
  */
 public class Collatz {
 
@@ -16,6 +16,7 @@ public class Collatz {
 
     public static void main(String[] args) {
         int n = 5;
+
         System.out.print(n + " ");
         while (n != 1) {
             n = nextNumber(n);
