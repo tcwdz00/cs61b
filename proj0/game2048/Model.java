@@ -93,6 +93,38 @@ public class Model extends Observable {
         checkGameOver();
         setChanged();
     }
+    /** move tiles in column j */
+    private boolean moveCol(Side side, int j){
+        boolean changed = false;
+        boolean preMerged = false;
+        int n = board.size();
+        int pre = n;
+        for (int i = n - 1; i >=0; i--){
+            Tile t = board.tile(j, i);
+            if (t == null){
+                continue;
+            }
+            if (pre < n && t.value() == board.tile(j, pre).value() && preMerged==false){
+                board.move(j, pre, t);
+                score += t.value() * 2;
+                changed = true;
+                preMerged = true;
+            }
+            else if (pre - 1 > i){
+                board.move(j, pre-1, t);
+                pre = pre - 1;
+                preMerged = false;
+                changed = true;
+            }
+            else{
+                pre = i;
+                preMerged = false;
+            }
+
+        }
+        return changed;
+    }
+
 
     /** Tilt the board toward SIDE. Return true iff this changes the board.
      *
@@ -109,8 +141,17 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
+        Board board = this.board;
+        board.setViewingPerspective(side);
+        int n = board.size();
 
-        // TODO: Modify this.board (and perhaps this.score) to account
+        for (int j = 0; j < n; j++){
+            if (moveCol(side, j)) {
+                changed = true;
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
@@ -137,7 +178,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int n = b.size();
+        for (int i = 0; i<n; i++){
+            for (int j = 0; j<n; j++){
+                if (b.tile(j,i) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +195,15 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        int n = b.size();
+        for (int i = 0; i<n; i++){
+            for (int j = 0; j<n; j++){
+                Tile t = b.tile(j,i);
+                if ((t!=null) && (t.value()== MAX_PIECE)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -158,7 +214,32 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        int n = b.size();
+        if (Model.emptySpaceExists(b)){
+            return true;
+        }
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n - 1; j++){
+                int val = b.tile(j, i).value();
+                int rightVal = b.tile(j + 1, i).value();
+
+                if (val == rightVal) {
+                    return true;
+                }
+            }
+
+        }
+        for (int j = 0; j < n; j++){
+            for (int i = 0; i < n - 1; i++){
+                int val = b.tile(j, i).value();
+                int upVal = b.tile(j, i+1).value();
+
+                if (val == upVal) {
+                    return true;
+                }
+            }
+
+        }
         return false;
     }
 
@@ -199,5 +280,17 @@ public class Model extends Observable {
     /** Returns hash code of Model’s string. */
     public int hashCode() {
         return toString().hashCode();
+    }
+
+    public static void main(String[] args){
+        int[][] rawVals = new int[][] {
+                {2, 4, 2, 2},
+                {4, 2, 4, 2},
+                {2, 4, 2, 4},
+                {4, 2, 4, 2},
+        };
+
+        Board b = new Board(rawVals, 0);
+        System.out.println(Model.atLeastOneMoveExists(b));
     }
 }
