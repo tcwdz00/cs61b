@@ -28,8 +28,8 @@ public class TestArrayDequeEC {
                 //System.out.println("addFirst(" + randVal + ")");
             } else if (operationNumber == 2) {
                 if (L.size() == 0) continue;
-                int lFirst = L.removeFirst();
-                int rfirst = R.removeFirst();
+                Integer lFirst = L.removeFirst();
+                Integer rfirst = R.removeFirst();
                 msg += "removeFirst()\n";
                 assertEquals(msg, lFirst, rfirst);
 
@@ -38,8 +38,8 @@ public class TestArrayDequeEC {
             // remove last ele
             else {
                 if (L.size() == 0) continue;
-                int L_last = L.removeLast();
-                int R_last = R.removeLast();
+                Integer L_last = L.removeLast();
+                Integer R_last = R.removeLast();
                 msg += "removeLast()\n";
                 assertEquals(msg, L_last, R_last);
 
