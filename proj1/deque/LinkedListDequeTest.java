@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -121,5 +122,71 @@ public class LinkedListDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
 
+    }
+
+    @Test
+    public void testThreeAddThreeRemove() {
+        LinkedListDeque<Integer> llst = new LinkedListDeque<>();
+        ArrayDeque<Integer> alst = new ArrayDeque<>();
+        llst.addLast(4);
+        alst.addLast(4);
+        llst.addLast(5);
+        alst.addLast(5);
+        llst.addLast(6);
+        alst.addLast(6);
+        assertEquals(llst.size(), alst.size());
+        assertEquals(llst.removeLast(), alst.removeLast());
+        assertEquals(llst.removeLast(), alst.removeLast());
+        assertEquals(llst.removeLast(), alst.removeLast());
+    }
+
+    @Test
+    public void randomizedTest() {
+        LinkedListDeque<Integer> L = new LinkedListDeque<>();
+        ArrayDeque<Integer> R = new ArrayDeque<>();
+        String msg = "";
+        int N = 5000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 5);
+            if (operationNumber == 0) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                L.addLast(randVal);
+                R.addLast(randVal);
+                msg += "addLast(" + randVal + ")\n";
+                //System.out.println("addLast(" + randVal + ")");
+            } else if (operationNumber == 1) {
+                int randVal = StdRandom.uniform(0, 100);
+                L.addFirst(randVal);
+                R.addFirst(randVal);
+                msg += "addFirst(" + randVal + ")\n";
+                //System.out.println("addFirst(" + randVal + ")");
+            } else if (operationNumber == 2) {
+                // size
+                int size = L.size();
+                int R_size = R.size();
+                assertEquals(size, R_size);
+                //System.out.println("size: " + size);
+
+            } else if (operationNumber == 3) {
+                if (L.size() == 0) continue;
+                int lFirst = L.removeFirst();
+                int rfirst = R.removeFirst();
+                msg += "removeFirst()";
+                assertEquals(msg, lFirst, rfirst);
+
+
+            }
+            // remove last ele
+            else {
+                if (L.size() == 0) continue;
+                int L_last = L.removeLast();
+                int R_last = R.removeLast();
+                msg += "removeLast()";
+                assertEquals(msg, L_last, R_last);
+
+            }
+
+        }
     }
 }

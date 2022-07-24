@@ -1,112 +1,112 @@
 package deque;
 
-public class LinkedListDeque<Type> {
+public class LinkedListDeque<T> implements Deque<T> {
 
     private Node sentinel;
     private int size;
 
-    private static class Node<Type> {
-        public Type item;
+    private static class Node<T> {
+        public T item;
         public Node pre;
         public Node nxt;
-        public int index;
 
-        public Node(Type itm) {
+
+        public Node(T itm) {
             item = itm;
-            index = -1;
-
         }
     }
 
     public LinkedListDeque() {
         sentinel = new Node(null);
-        sentinel.nxt = sentinel;
-        sentinel.pre = sentinel;
+        Node<T> tail = new Node<>(null);
+        sentinel.pre = tail;
+        sentinel.nxt = tail;
+        tail.pre = sentinel;
+        tail.nxt = sentinel;
         size = 0;
     }
 
-    public void addFirst(Type item) {
-        Node<Type> n = new Node<>(item);
-        n.index = 1;
+    @Override
+    public void addFirst(T item) {
+        Node<T> n = new Node<>(item);
         n.nxt = sentinel.nxt;
         sentinel.nxt.pre = n;
         n.pre = sentinel;
         sentinel.nxt = n;
-        n.pre = sentinel;
         size += 1;
 
     }
 
-    public void addLast(Type item) {
-        Node<Type> n = new Node<>(item);
-        n.index = size;
-        Node<Type> tail = sentinel.pre;
-        tail.nxt = n;
-        n.pre = tail;
-        n.nxt = sentinel;
-        sentinel.pre = n;
+    @Override
+    public void addLast(T item) {
+        Node<T> n = new Node<>(item);
+        Node<T> tail = sentinel.pre;
+        n.pre = tail.pre;
+        n.pre.nxt = n;
+        n.nxt = tail;
+        tail.pre = n;
         size += 1;
     }
 
-    public boolean isEmpty() {
-        return sentinel.nxt == sentinel;
-    }
-
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public void printDeque() {
-        Node<Type> n = sentinel;
-        while (n != sentinel) {
-            System.out.print(n.item + " ");
+        Node<T> n = sentinel;
+        for (int i = 0; i < size; i++) {
             n = n.nxt;
+            System.out.print(n.item);
         }
         System.out.print("\n");
     }
 
-
-
-    public Type removeFirst() {
+    @Override
+    public T removeFirst() {
         if (size == 0) return null;
-        Node<Type> first = sentinel.nxt;
+        Node<T> first = sentinel.nxt;
         sentinel.nxt = sentinel.nxt.nxt;
         sentinel.nxt.pre = sentinel;
         size -= 1;
         return first.item;
     }
 
-
-    public Type removeLast() {
+    @Override
+    public T removeLast() {
         if (size == 0) return null;
-        Node<Type> last = sentinel.pre;
-        sentinel.pre = sentinel.pre.pre;
-        sentinel.pre.nxt = sentinel;
+        Node<T> tail = sentinel.pre;
+        Node<T> last = tail.pre;
+        tail.pre = tail.pre.pre;
+        tail.pre.nxt = tail;
         size -= 1;
         return last.item;
     }
 
-
-    public Type get(int index) {
-        Node<Type> n = sentinel.nxt;
-        while (n!=sentinel) {
-            if (n.index == index) return n.item;
+    @Override
+    public T get(int index) {
+        Node<T> n = sentinel.nxt;
+        Node<T> tail = sentinel.pre;
+        int i = 0;
+        while (n != tail) {
+            if (i == index) return n.item;
+            n = n.nxt;
+            i++;
         }
         return null;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof LinkedListDeque)) return false;
-        LinkedListDeque<Type> obj = (LinkedListDeque<Type>) o;
-        Node<Type> p1 = sentinel.nxt;
-        Node<Type> p2 = obj.sentinel.nxt;
-        while (p1 != sentinel && p2 != obj.sentinel && p1.item == p2.item) {
+        LinkedListDeque<T> obj = (LinkedListDeque<T>) o;
+        Node<T> p1 = sentinel.nxt;
+        Node<T> p2 = obj.sentinel.nxt;
+        while (p1 != sentinel.pre && p2 != obj.sentinel.pre && p1.item == p2.item) {
             p1 = p1.nxt;
             p2 = p2.nxt;
         }
-        return p1.item == p1.item;
+        return p1.item == p2.item;
     }
-
-
-
 }
